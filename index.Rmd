@@ -1,0 +1,42 @@
+---
+title: "Data Product Assignment Week 3"
+author: "A. J. R"
+date: "April 2017"
+output:
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(plotly)
+
+```
+
+## Population trends in Spain
+
+The following plotly graphic shows the % population changes of the  autonomous regions of spain. Source of the data: http://www.ine.es/jaxiT3/Datos.htm?t=2915. 
+
+```{r echo = FALSE, warning=FALSE}
+
+poblacion <- read.csv("2915sc.csv", sep = "\t", header = TRUE, encoding = "UTF-8", row.names = 1, check.names = FALSE)
+colnames(poblacion) <- as.numeric(colnames(poblacion))
+poblacion <- poblacion[,length(poblacion):1]
+base <- poblacion[,1]
+
+p2 <- poblacion
+for (r in seq(nrow(p2)))
+    for (c in seq(ncol(p2)))
+      p2[r, c] <- (poblacion[r,c]-poblacion[r,1])*100/poblacion[r,1]
+p3 <- t(p2)
+p3 <- as.data.frame(p3)
+
+g <- plot_ly(data = p3, x = rownames(p3)) %>%
+  layout(margin = list(l=50, r=50, b=100, t=10, pad=4), xaxis = list(title="year"), yaxis = list(title="% population change"))
+
+for (r in seq(ncol(p3)))
+  g <- add_trace(g, y = p3[,r], name = colnames(p3)[r], mode = 'lines',  type='scatter')
+g
+
+```
+
+
